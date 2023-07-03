@@ -104,11 +104,11 @@ def launch():
     import argparse
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
-    args.run_name = "DDPM_Uncondtional_FFHQ"
+    args.run_name = "DDPM_Cataract"
     args.epochs = 500
     args.batch_size = 2
     args.image_size = 64
-    args.dataset_path = r"datasets/FFHQ"
+    args.dataset_path = r"images/CPS_Dog_Cataract_Rand"
     args.device = "cuda"
     args.lr = 3e-4
     train(args)
@@ -144,8 +144,8 @@ def sample_images(dataset_path, output_path, grid_size=8):
 if __name__ == '__main__':
     launch()
     
-    dataset_path = 'datasets/FFHQ'
-    output_path = 'results/DDPM_Unconditional_FFHQ-3'
+    dataset_path = 'images/CPS_Dog_Cataract_Rand'
+    output_path = 'Results/DDPM_Cataract'
     sample_images(dataset_path, output_path, grid_size=8)
     
     device = "cuda"

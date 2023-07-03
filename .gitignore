@@ -7,3 +7,8 @@ Results/*/
 Results/**/*.jpg
 Results/**/*.jpeg
 Results/**/*.png
+
+results/*/
+results/**/*.jpg
+results/**/*.jpeg
+results/**/*.png
