@@ -106,7 +106,7 @@ def launch():
     args = parser.parse_args()
     args.run_name = "DDPM_Cataract"
     args.epochs = 500
-    args.batch_size = 2
+    args.batch_size = 8
     args.image_size = 64
     args.dataset_path = r"images/CPS_Dog_Cataract_Rand"
     args.device = "cuda"
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     
     device = "cuda"
     model = UNet().to(device)
-    ckpt = torch.load("models/DDPM_Uncondtional_FFHQ-3/ckpt.pt")
+    ckpt = torch.load("models/DDPM_Cataract/ckpt.pt")
     model.load_state_dict(ckpt)
     diffusion = Diffusion(img_size=64, device=device)
     x = diffusion.sample(model, 8)
