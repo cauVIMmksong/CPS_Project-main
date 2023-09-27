@@ -2,6 +2,8 @@ images/*/
 images/**/*.jpg
 images/**/*.jpeg
 images/**/*.png
+images/CPS_Dog_Cataract_Rand/*/
+images/CPS_Dog_Cataract_Rand/dataset/*.jpg
 
 Results/*/
 Results/**/*.jpg
@@ -12,3 +14,9 @@ results/*/
 results/**/*.jpg
 results/**/*.jpeg
 results/**/*.png
+
+fake_img/*/
+fake_img/**/*.jpg
+
+models/*/
+models/**/.pt
