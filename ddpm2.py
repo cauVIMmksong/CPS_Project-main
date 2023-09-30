@@ -53,7 +53,7 @@ class Diffusion:
         model.eval()
         fake_img_dir = "fake_img"
         os.makedirs(fake_img_dir, exist_ok=True)  # Create directory if it doesn't exist
-    
+
         for idx in range(n):
             with torch.no_grad():
                 x = torch.randn((1, 3, self.img_size, self.img_size)).to(self.device)
@@ -68,13 +68,13 @@ class Diffusion:
                     else:
                         noise = torch.zeros_like(x)
                     x = 1 / torch.sqrt(alpha) * (x - ((1 - alpha) / (torch.sqrt(1 - alpha_hat))) * predicted_noise) + torch.sqrt(beta) * noise
-    
+
                 # Clamp the values and convert to uint8 format for saving as an image
                 x = (x.clamp(-1, 1) + 1) / 2
                 img_path = os.path.join(fake_img_dir, f"sample_{idx}.jpg")
                 save_image(x, img_path)
                 del x  # Explicitly delete the tensor to free up memory
-    
+
         model.train()
 
 
@@ -166,7 +166,6 @@ if __name__ == '__main__':
     model.load_state_dict(ckpt)
     diffusion = Diffusion(img_size=64, device=device)
     x = diffusion.sample(model,70000)
-    print(x.shape)
 
     x_grid = make_grid(x, nrow=4, pad_value=1)
     x_grid_np = (x_grid.permute(1, 2, 0)*255).type(torch.uint8).cpu().numpy()
