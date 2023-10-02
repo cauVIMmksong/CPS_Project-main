@@ -47,12 +47,19 @@ class SelfAttention(nn.Module):
         )
 
     def forward(self, x):
-        x = x.view(-1, self.channels, self.size * self.size).swapaxes(1, 2)
+        #print("Shape of x in SelfAttention:", x.shape)
+        original_batch_size = x.size(0)
+        self.size = x.shape[2]  # Update this line
+        x = x.view(original_batch_size, self.size, self.size, self.channels).permute(0, 2, 3, 1).contiguous().view(original_batch_size, self.size * self.size, self.channels)
+
         x_ln = self.ln(x)
         attention_value, _ = self.mha(x_ln, x_ln, x_ln)
         attention_value = attention_value + x
         attention_value = self.ff_self(attention_value) + attention_value
-        return attention_value.swapaxes(2, 1).view(-1, self.channels, self.size, self.size)
+        attention_value = attention_value.view(original_batch_size, self.channels, self.size, self.size)
+        return attention_value
+
+
 
 
 class DoubleConv(nn.Module):
@@ -94,8 +101,11 @@ class Down(nn.Module):
         )
 
     def forward(self, x, t):
+        #print("Shape of t:", t.shape)
+        #print("Shape of x:", x.shape)
+
         x = self.maxpool_conv(x)
-        emb = self.emb_layer(t)[:, :, None, None].repeat(1, 1, x.shape[-2], x.shape[-1])
+        emb = self.emb_layer(t).unsqueeze(2).unsqueeze(3).expand(-1, -1, x.shape[2], x.shape[3])
         return x + emb
 
 
@@ -121,7 +131,7 @@ class Up(nn.Module):
         x = self.up(x)
         x = torch.cat([skip_x, x], dim=1)
         x = self.conv(x)
-        emb = self.emb_layer(t)[:, :, None, None].repeat(1, 1, x.shape[-2], x.shape[-1])
+        emb = self.emb_layer(t).unsqueeze(2).unsqueeze(3).expand(-1, -1, x.shape[2], x.shape[3])
         return x + emb
 
 
@@ -151,10 +161,8 @@ class UNet(nn.Module):
         self.outc = nn.Conv2d(64, c_out, kernel_size=1)
 
     def pos_encoding(self, t, channels):
-        inv_freq = 1.0 / (
-            10000
-            ** (torch.arange(0, channels, 2, device=self.device).float() / channels)
-        )
+        inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2, device=self.device).float() / channels))
+
         pos_enc_a = torch.sin(t.repeat(1, channels // 2) * inv_freq)
         pos_enc_b = torch.cos(t.repeat(1, channels // 2) * inv_freq)
         pos_enc = torch.cat([pos_enc_a, pos_enc_b], dim=-1)
@@ -225,10 +233,12 @@ class UNet_conditional(nn.Module):
         return pos_enc
 
     def forward(self, x, t, y):
-        t = t.unsqueeze(-1).type(torch.float)
+        batch_size = x.size(0)
+        t = t[:batch_size].unsqueeze(-1).type(torch.float)
         t = self.pos_encoding(t, self.time_dim)
 
         if y is not None:
+            y = y[:batch_size]
             t += self.label_emb(y)
 
         x1 = self.inc(x)
@@ -238,10 +248,6 @@ class UNet_conditional(nn.Module):
         x3 = self.sa2(x3)
         x4 = self.down3(x3, t)
         x4 = self.sa3(x4)
-
-        x4 = self.bot1(x4)
-        x4 = self.bot2(x4)
-        x4 = self.bot3(x4)
 
         x = self.up1(x4, x3, t)
         x = self.sa4(x)

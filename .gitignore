@@ -20,3 +20,6 @@ fake_img/**/*.jpg
 
 models/*/
 models/**/.pt
+
+runs/*
+__pycache__/*
