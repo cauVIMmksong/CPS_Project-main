@@ -4,6 +4,8 @@ import torchvision
 from PIL import Image
 from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader
+import numpy as np
+
 
 
 def plot_images(images):
