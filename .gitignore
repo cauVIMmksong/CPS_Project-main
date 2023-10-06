@@ -23,3 +23,7 @@ models/**/.pt
 
 runs/*
 __pycache__/*
+
+saved_models/*
+fake_image_Dog/*
+fake_image_Dog2/*
