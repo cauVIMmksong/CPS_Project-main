@@ -15,6 +15,7 @@ results/**/*.jpg
 results/**/*.jpeg
 results/**/*.png
 
+CIFAR10_fake/*
 fake_img/*/
 fake_img/**/*.jpg
 

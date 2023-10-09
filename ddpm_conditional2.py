@@ -12,6 +12,14 @@ from torch.utils.tensorboard import SummaryWriter
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s: %(message)s", level=logging.INFO, datefmt="%I:%M:%S")
 
+from PIL import Image
+
+def save_image(tensor, filename):
+    img = tensor.cpu().numpy().transpose(1, 2, 0)
+    img = (img * 255).astype(np.uint8)
+    pil_img = Image.fromarray(img)
+    pil_img.save(filename)
+    del pil_img
 
 class Diffusion:
     def __init__(self, noise_steps=1000, beta_start=1e-4, beta_end=0.02, img_size=256, device="cuda"):
@@ -124,8 +132,8 @@ def launch():
     train(args)
 
 
-if __name__ == '__main__':
-    launch()
+#if __name__ == '__main__':
+    #launch()
     # device = "cuda"
     # model = UNet_conditional(num_classes=10).to(device)
     # ckpt = torch.load("./models/DDPM_conditional/ckpt.pt")
@@ -135,3 +143,40 @@ if __name__ == '__main__':
     # y = torch.Tensor([6] * n).long().to(device)
     # x = diffusion.sample(model, n, y, cfg_scale=0)
     # plot_images(x)
+
+if __name__ == '__main__':
+    model_path = "models/DDPM_conditional_CIFAR10(v4)/ema_ckpt.pt"
+    output_dir = "CIFAR10_fake/img"
+    total_images = 6000
+    batch_size = 10  # 이 값을 조정하여 원하는 배치 크기를 설정하세요.
+
+    # Load model and diffusion instance
+    device = "cuda"
+    model = UNet_conditional(num_classes=10).to(device)
+    diffusion = Diffusion(img_size=64, device=device)
+
+    # Load pretrained model weights
+    ckpt = torch.load(model_path)
+    model.load_state_dict(ckpt)
+    model.eval()
+
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Generate and save images in batches
+    for batch_start in range(0, total_images, batch_size):
+        batch_end = min(batch_start + batch_size, total_images)
+        batch_size_current = batch_end - batch_start
+        
+        y = torch.Tensor([i % 10 for i in range(batch_start, batch_end)]).long().to(device)
+        generated_images = diffusion.sample(model, batch_size_current, y, cfg_scale=0)
+        
+        for idx, img_tensor in enumerate(generated_images):
+            filename = os.path.join(output_dir, f"img_{batch_start + idx}.jpg")
+            save_image(img_tensor, filename)
+        
+        # Optional: Clear GPU memory cache
+        torch.cuda.empty_cache()
+
+
+
