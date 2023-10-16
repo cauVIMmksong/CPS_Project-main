@@ -124,8 +124,8 @@ def train(args):
     ema_model = copy.deepcopy(model).eval().requires_grad_(False)
 
     # Load checkpoint
-    start_epoch = 41  # 체크포인트에 저장된 에포크 번호 + 1
-    checkpoint_path = "./models/PCA_DDPM_CIFAR10(v4)/ckpt_40.pt"
+    start_epoch = 71  # 체크포인트에 저장된 에포크 번호 + 1
+    checkpoint_path = "./models/PCA_DDPM_CIFAR10(v4)/ckpt_70.pt"
     checkpoint = torch.load(checkpoint_path)
     model.load_state_dict(checkpoint)
     #optimizer.load_state_dict(checkpoint['optimizer_state_dict'])

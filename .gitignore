@@ -18,6 +18,7 @@ results/**/*.png
 CIFAR10_fake/*
 fake_img/*/
 fake_img/**/*.jpg
+fake_CIFAR10_img/*
 
 models/*/
 models/**/.pt
