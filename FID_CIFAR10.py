@@ -52,11 +52,11 @@ transform = T.Compose([
     T.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
 
-real_dataset = dset.ImageFolder(root='images/cifar10-32/test', transform=transform)
+real_dataset = dset.ImageFolder(root='images/cifar10-32(2)/train', transform=transform)
 real_dataloader = torch.utils.data.DataLoader(real_dataset, batch_size=batch_size, shuffle=True)
 
 # 2. 가짜 데이터셋에 대한 Dataloader 생성
-fake_dataset = dset.ImageFolder(root = 'CIFAR10_fake', transform=transform)
+fake_dataset = dset.ImageFolder(root = 'fake_CIFAR10_img', transform=transform)
 fake_dataloader = torch.utils.data.DataLoader(fake_dataset, batch_size=batch_size, shuffle=True)
 
 # 몇 개의 샘플 이미지를 시각화합니다.
@@ -67,6 +67,12 @@ plt.title("Sample Images")
 plt.imshow(np.transpose(vutils.make_grid(sample_batch[0][:64], padding=2, normalize=True).cpu(),(1,2,0)))
 plt.show()
 
+sample_batch = next(iter(fake_dataloader))
+plt.figure(figsize=(8,8))
+plt.axis("off")
+plt.title("fake Sample Images")
+plt.imshow(np.transpose(vutils.make_grid(sample_batch[0][:64], padding=2, normalize=True).cpu(),(1,2,0)))
+plt.show()
 #%%
 
 # 실제 데이터와 생성된 데이터의 특징 벡터를 추출

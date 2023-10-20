@@ -104,11 +104,11 @@ def launch():
     import argparse
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
-    args.run_name = "DDPM_Cataract"
-    args.epochs = 500
+    args.run_name = "FFHQ_small_2"
+    args.epochs = 300
     args.batch_size = 8
     args.image_size = 64
-    args.dataset_path = r"images/CPS_Dog_Cataract_Rand"
+    args.dataset_path = r"images/FFHQ2"
     args.device = "cuda"
     args.lr = 3e-4
     train(args)
@@ -144,16 +144,16 @@ def sample_images(dataset_path, output_path, grid_size=8):
 if __name__ == '__main__':
     launch()
     
-    dataset_path = 'images/CPS_Dog_Cataract_Rand'
-    output_path = 'Results/DDPM_Cataract'
+    dataset_path = 'images/FFHQ2'
+    output_path = 'Results/FFHQ_small_2'
     sample_images(dataset_path, output_path, grid_size=8)
     
     device = "cuda"
     model = UNet().to(device)
-    ckpt = torch.load("models/DDPM_Cataract/ckpt.pt")
+    ckpt = torch.load("models/FFHQ(small)/ckpt.pt")
     model.load_state_dict(ckpt)
     diffusion = Diffusion(img_size=64, device=device)
-    x = diffusion.sample(model, 8)
+    x = diffusion.sample(model, 16)
     print(x.shape)
 
     x_grid = make_grid(x, nrow=4, pad_value=1)
