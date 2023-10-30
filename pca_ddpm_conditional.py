@@ -124,8 +124,8 @@ def train(args):
     ema_model = copy.deepcopy(model).eval().requires_grad_(False)
 
     # Load checkpoint
-    start_epoch = 301  # 체크포인트에 저장된 에포크 번호 + 1
-    checkpoint_path = "./models/PCA_DDPM_CIFAR10(v4)/ckpt_299.pt"
+    start_epoch = 2000  # 체크포인트에 저장된 에포크 번호 + 1
+    checkpoint_path = "./models/PCA_DDPM_CIFAR10(v6)/ckpt_1999.pt"
     checkpoint = torch.load(checkpoint_path)
     model.load_state_dict(checkpoint)
     #optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -167,8 +167,8 @@ def launch():
     import argparse
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
-    args.run_name = "PCA_DDPM_CIFAR10(v4)"
-    args.epochs = 500
+    args.run_name = "PCA_DDPM_CIFAR10(v7)"
+    args.epochs = 3000
     args.batch_size = 10
     args.image_size = 64
     args.num_classes = 10
@@ -184,7 +184,7 @@ if __name__ == '__main__':
     # args 객체 생성
     class Args:
         def __init__(self):
-            self.run_name = "PCA_DDPM_CIFAR10(v5)"
+            self.run_name = "PCA_DDPM_CIFAR10(v7)"
             self.batch_size = 10
             self.image_size = 64
             self.num_classes = 10
@@ -196,7 +196,7 @@ if __name__ == '__main__':
 
     device = "cuda"
     model = UNet_conditional(num_classes=10).to(device)
-    ckpt = torch.load("./models/PCA_DDPM_CIFAR10(v4)/ckpt_290.pt")
+    ckpt = torch.load("./models/PCA_DDPM_CIFAR10(v6)/ema_ckpt_1999.pt")
     model.load_state_dict(ckpt)
 
      # 아래 두 줄을 추가합니다.
